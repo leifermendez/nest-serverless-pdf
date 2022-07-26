@@ -1,0 +1,35 @@
+org: leifermendez
+app: serverless-example
+service: serverless-example
+
+plugins:
+  - serverless-offline
+  - serverless-apigw-binary
+  - serverless-plugin-include-dependencies
+
+custom:
+  apigwBinary:
+    #list of mime-types
+    types: 
+      - '*/*'
+
+provider:
+  name: aws
+  deploymentMethod: direct
+  runtime: nodejs12.x
+
+package:
+  patterns:
+    - '!node_modules/puppeteer/.local-chromium/**'
+    - 'node_modules/@nestjs/common/**'
+
+functions:
+  main:
+    handler: dist/main.handler
+    events:
+      - http:
+          method: ANY
+          path: /
+      - http:
+          method: ANY
+          path: '{proxy+}'
